@@ -23,7 +23,7 @@ except ImportError:
     pyttsx3 = cast(Any, None)
 
 # ── Config ─────────────────────────────────────────────────────────────────────
-MODEL          = "llama3-8b-8192"
+MODEL          = "llama-3.1-8b-instant"
 GROQ_API_KEY   = os.environ.get("GROQ_API_KEY") # No longer hardcoded
 groq_client    = Groq(api_key=GROQ_API_KEY)
 MAX_TOKENS        = 1024
