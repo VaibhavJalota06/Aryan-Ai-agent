@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aryan | Professional AI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=3.0">
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<!-- ══ LANDING / LOGIN ══════════════════════════════════════════════════════ -->
+<div id="loginWrap" class="glass">
+    <div class="logo">
+        <div class="logo-icon">✨</div>
+        <span class="logo-text">Aryan Assistant</span>
+    </div>
+    <p class="tagline">// Professional Intelligence System</p>
+
+    <!-- Welcome View -->
+    <div id="welcomeView">
+        <h2 style="font-size: 1.5rem; margin-bottom: 8px;">Welcome back.</h2>
+        <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 32px;">Please select your access portal to continue.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn btn-a" onclick="showLoginForm('admin')">🛡 Administrator Access</button>
+            <button class="btn btn-t" onclick="showLoginForm('team')">👥 Team Member Portal</button>
+        </div>
+        <p style="text-align: center; margin-top: 24px; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;">
+            Authorized Personnel Only
+        </p>
+    </div>
+
+    <!-- Login Form View (Hidden by default) -->
+    <div id="loginForm" style="display: none;">
+        <button onclick="showWelcome()" style="background: none; border: none; color: var(--acc-a); font-weight: 700; font-size: 0.8rem; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 6px;">
+            ← Back to portals
+        </button>
+        
+        <h3 id="formTitle" style="margin-bottom: 20px;">Admin Login</h3>
+        
+        <div class="field">
+            <label>Username</label>
+            <input id="uname" placeholder="Enter your username" autocomplete="off">
+        </div>
+        <div class="field">
+            <label>Security Key</label>
+            <input id="upw" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()">
+        </div>
+
+        <div class="err" id="errMsg">⚠ Information mismatch. Please verify.</div>
+        <button class="btn" id="loginBtn" onclick="doLogin()">Authorize Access</button>
+    </div>
+</div>
+
+<!-- ══ MAIN INTERFACE ════════════════════════════════════════════════════════ -->
+<div id="shell">
+    <nav class="topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+            <div class="brand">Aryan <span id="brandAccent" class="purple">Pro</span></div>
+            <span class="badge" id="roleBadge">System Access</span>
+        </div>
+        <div class="userpill">
+            <div class="av" id="avEl">J</div>
+            <span id="nameEl">User</span>
+            <button class="logout" onclick="doLogout()">Terminate</button>
+        </div>
+    </nav>
+
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <!-- Dynamic Nav Items -->
+        </aside>
+
+        <main class="content">
+            <!-- Dashboard Page -->
+            <section id="pg-dashboard" class="page">
+                <div class="glass panel" style="margin-bottom: 32px;">
+                    <h1>System Overview</h1>
+                    <p class="sub">Welcome to the central command unit.</p>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat glass">
+                        <div class="num" id="stUsers">0</div>
+                        <div class="lbl">Active Users</div>
+                    </div>
+                    <div class="stat glass">
+                        <div class="num" id="stMsgs">0</div>
+                        <div class="lbl">Queries Processed</div>
+                    </div>
+                    <div class="stat glass">
+                        <div class="num" id="stUp">0%</div>
+                        <div class="lbl">System Uptime</div>
+                    </div>
+                </div>
+
+                <div class="panels">
+                    <div class="panel glass">
+                        <h3>Personnel Directory</h3>
+                        <div id="userList"><div class="empty">Scanning users...</div></div>
+                    </div>
+                    <div class="panel glass">
+                        <h3>System Event Log</h3>
+                        <div id="logList"><div class="empty">Retrieving logs...</div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Page -->
+            <section id="pg-users" class="page">
+                <h1>Personnel Management</h1>
+                <p class="sub">Provision or revoke system access</p>
+                <div class="panel glass" style="margin-bottom:24px;">
+                    <h3>New Credentials</h3>
+                    <div class="form-grid">
+                        <div class="field"><label>ID</label><input id="nu-id" placeholder="UID-001"></div>
+                        <div class="field"><label>Full Name</label><input id="nu-name" placeholder="John Doe"></div>
+                        <div class="field"><label>Username</label><input id="nu-user" placeholder="j.doe"></div>
+                        <div class="field"><label>Password</label><input id="nu-pw" type="password" placeholder="••••••••"></div>
+                        <div class="field">
+                            <label>Designation</label>
+                            <select id="nu-role">
+                                <option value="team">Team Member</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-a" style="width: auto; padding: 12px 30px;" onclick="addUser()">Create Account</button>
+                </div>
+                <div class="panel glass">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+                        <h3 style="margin:0;">All Staff</h3>
+                        <input id="userSearch" placeholder="🔍 Search personnel..." onkeyup="filterUsers()" style="width:250px; border-radius: 8px; border: 1px solid var(--border); padding: 8px 12px; background: rgba(0,0,0,0.2); color: #fff; font-size:0.85rem;">
+                    </div>
+                    <div id="allUsers"></div>
+                </div>
+            </section>
+
+            <!-- Logs Page -->
+            <section id="pg-logs" class="page">
+                <h1>Master Event Logs</h1>
+                <p class="sub">Full audit trail of all system operations</p>
+                <div class="panel glass">
+                    <div id="fullLogs"></div>
+                </div>
+            </section>
+
+            <!-- Chat Page -->
+            <section id="pg-chat" class="page">
+                <h1>Neural Interface</h1>
+                <p class="sub">Direct communication with Jarvis AI core</p>
+                <div class="chat-box glass">
+                    <div class="chat-head"><div class="dot"></div> Aryan AI Core · Online</div>
+                    <div class="chat-msgs" id="chatMsgs"></div>
+                    <div class="chat-input glass">
+                        <input id="chatIn" placeholder="Enter query..." onkeydown="if(event.key==='Enter') sendChat()">
+                        <button class="btn btn-a" onclick="sendChat()">Execute</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Memory Page -->
+            <section id="pg-memory" class="page">
+                <h1>Cognitive Database</h1>
+                <p class="sub">Manage persistent facts and personal context</p>
+                
+                <div class="panels">
+                    <div class="panel glass">
+                        <h3>🌐 Shared Intelligence</h3>
+                        <div style="margin-bottom: 16px;">
+                            <input id="memSearch" placeholder="🔍 Search facts..." onkeyup="filterMemory()" style="width:100%; border-radius: 12px; border: 1px solid var(--border); padding: 10px 15px; background: rgba(255,255,255,0.05); color: #fff;">
+                        </div>
+
+                        <div id="bulkControls" style="display:none;" class="chk-header">
+                            <label for="checkAll" style="cursor:pointer; margin-bottom:0; font-size:inherit; font-weight:inherit; color:inherit; letter-spacing:inherit; text-transform:inherit;">SELECT ALL</label>
+                            <input type="checkbox" id="checkAll" class="custom-chk" onclick="toggleAllFacts(this)">
+                        </div>
+                        
+                        <div id="factsArea"></div>
+                        
+                        <div id="adminMemUI" style="display:none; margin-top:24px; border-top:1px solid var(--border); padding-top:20px;">
+                            <div style="display:flex; flex-direction:column; gap:12px;">
+                                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 2px;">
+                                    <span class="pill" style="cursor:pointer; background:rgba(255,255,255,0.08);" onclick="setMemTitle('General')">General</span>
+                                    <span class="pill" style="cursor:pointer; background:rgba(255,255,255,0.08);" onclick="setMemTitle('Strategic')">Strategic</span>
+                                    <span class="pill" style="cursor:pointer; background:rgba(255,255,255,0.08);" onclick="setMemTitle('Technical')">Technical</span>
+                                    <span class="pill" style="cursor:pointer; background:rgba(255,255,255,0.08);" onclick="setMemTitle('Personnel')">Personnel</span>
+                                </div>
+                                <div style="display:flex; gap:12px;">
+                                    <input id="memTitle" placeholder="Title / Category (e.g. Personnel, Strategic)" style="flex:1;">
+                                </div>
+                                <div style="display:flex; flex-direction:column; gap:8px;">
+                                    <div style="background:rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; overflow:hidden;">
+                                        <div style="background:rgba(0,0,0,0.2); padding:6px 10px; display:flex; gap:6px; flex-wrap:wrap; align-items:center; border-bottom:1px solid var(--border);">
+                                            <button onclick="document.execCommand('bold')" style="padding:4px 10px; font-weight:bold; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:4px; color:#fff; cursor:pointer;" title="Bold">B</button>
+                                            <button onclick="document.execCommand('italic')" style="padding:4px 10px; font-style:italic; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:4px; color:#fff; cursor:pointer;" title="Italic">I</button>
+                                            <button onclick="document.execCommand('underline')" style="padding:4px 10px; text-decoration:underline; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:4px; color:#fff; cursor:pointer;" title="Underline">U</button>
+                                            <button onclick="document.execCommand('strikeThrough')" style="padding:4px 10px; text-decoration:line-through; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:4px; color:#fff; cursor:pointer;" title="Strikethrough">S</button>
+                                            <div style="width:1px; height:16px; background:var(--border); margin:0 4px;"></div>
+                                            <button onclick="document.execCommand('justifyLeft')" style="padding:4px 10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:4px; color:#fff; cursor:pointer;" title="Align Left">Left</button>
+                                            <button onclick="document.execCommand('justifyCenter')" style="padding:4px 10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:4px; color:#fff; cursor:pointer;" title="Center">Center</button>
+                                            <button onclick="document.execCommand('insertUnorderedList')" style="padding:4px 10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:4px; color:#fff; cursor:pointer;" title="Bullets">List</button>
+                                        </div>
+                                        <div id="memIn" contenteditable="true" aria-placeholder="New information byte..." style="padding: 12px; min-height: 80px; color: #fff; font-family: inherit; outline:none; white-space:pre-wrap; word-break:break-word;" oninput="document.getElementById('charCount').innerText = this.innerText.length"></div>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <div id="charCount" style="color:var(--muted); font-size:0.75rem; text-align:right; font-family:'DM Mono', monospace;">0</div>
+                                        <button onclick="addFact()" class="btn btn-a" style="width:120px;">Inject</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:10px; margin-top: 15px;">
+                                <button class="btn" style="background: var(--acc-a); flex:1; font-size: 0.8rem;" onclick="deleteSelectedFacts()">Purge Selected</button>
+                                <button class="btn btn-danger" style="flex:1; font-size: 0.8rem;" onclick="clearGlobalMemory()">Wipe All</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel glass" id="personalContextPanel">
+                        <h3>🔒 Personal Context</h3>
+                        <div class="memory-box glass" style="margin-bottom: 20px;">
+                            <div id="memStats" class="num" style="color: var(--acc-t);">0</div>
+                            <div class="lbl">Active Context Layers</div>
+                        </div>
+                        <button class="btn btn-danger" onclick="clearMemory()">Reset Private History</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}?v=5.0"></script>
+</body>
+</html>
